@@ -1,109 +1,97 @@
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Target, PlusCircle } from "lucide-react";
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Plus } from "lucide-react";
+import { Link } from "react-router-dom";
 
-// Mock data - would be replaced with real user data in production
-const mockGoals = [
+// Mock data
+const goals = [
   {
     id: 1,
     name: "Emergency Fund",
-    targetAmount: 25000,
-    currentAmount: 15000,
-    targetDate: new Date(2023, 11, 31),
-    iconColor: "#0ea5e9"
+    target: 25000,
+    current: 15000,
+    dueDate: "Dec 2023",
+    color: "bg-wealth-primary"
   },
   {
     id: 2,
-    name: "Down Payment",
-    targetAmount: 60000,
-    currentAmount: 24000,
-    targetDate: new Date(2025, 5, 30),
-    iconColor: "#8b5cf6"
+    name: "Home Down Payment",
+    target: 60000,
+    current: 24000,
+    dueDate: "Jun 2025",
+    color: "bg-wealth-secondary"
   },
   {
     id: 3,
-    name: "Vacation",
-    targetAmount: 8000,
-    currentAmount: 2500,
-    targetDate: new Date(2023, 7, 15),
-    iconColor: "#f97316"
+    name: "New Car",
+    target: 35000,
+    current: 8000,
+    dueDate: "Aug 2024",
+    color: "bg-wealth-accent"
   }
 ];
 
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0,
-});
-
-const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(date);
-};
-
-const GoalCard = ({ goal }: { goal: typeof mockGoals[0] }) => {
-  const percentComplete = Math.round((goal.currentAmount / goal.targetAmount) * 100);
-  const remaining = goal.targetAmount - goal.currentAmount;
-  
-  return (
-    <div className="glass-card p-4 rounded-xl relative overflow-hidden">
-      <div className="flex justify-between items-start mb-3">
-        <div className="flex items-center gap-2">
-          <span 
-            className="p-2 rounded-full" 
-            style={{ backgroundColor: `${goal.iconColor}20` }}
-          >
-            <Target className="h-4 w-4" style={{ color: goal.iconColor }} />
-          </span>
-          <h4 className="font-medium">{goal.name}</h4>
-        </div>
-        <span className="text-xs text-muted-foreground">Target: {formatDate(goal.targetDate)}</span>
-      </div>
-      
-      <div className="mb-3">
-        <div className="flex justify-between mb-1 text-sm">
-          <span>{formatter.format(goal.currentAmount)}</span>
-          <span>{formatter.format(goal.targetAmount)}</span>
-        </div>
-        <Progress value={percentComplete} className="h-2" indicatorColor={goal.iconColor} />
-      </div>
-      
-      <div className="flex justify-between items-center">
-        <span className="text-xs text-muted-foreground">
-          {percentComplete}% • {formatter.format(remaining)} to go
-        </span>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <PlusCircle className="h-4 w-4" />
-          <span className="sr-only">Add funds</span>
-        </Button>
-      </div>
-    </div>
-  );
+// Format currency
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
 };
 
 const GoalPlanner = () => {
   return (
     <Card className="glass-card">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-xl">Financial Goals</CardTitle>
-        <CardDescription>Track your progress toward financial milestones</CardDescription>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>Financial Goals</CardTitle>
+          <CardDescription>Track progress towards your objectives</CardDescription>
+        </div>
+        <Link to="/goals">
+          <Button size="sm" className="flex items-center gap-1 bg-gradient-to-r from-wealth-primary to-wealth-secondary">
+            <Plus className="h-4 w-4" />
+            <span>Add Goal</span>
+          </Button>
+        </Link>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {mockGoals.map(goal => (
-            <GoalCard key={goal.id} goal={goal} />
-          ))}
+          {goals.map(goal => {
+            const percent = Math.round((goal.current / goal.target) * 100);
+            
+            return (
+              <div key={goal.id} className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="font-medium">{goal.name}</p>
+                    <p className="text-xs text-muted-foreground">Due {goal.dueDate}</p>
+                  </div>
+                  <p className="text-sm font-medium">{percent}%</p>
+                </div>
+                
+                <Progress 
+                  value={percent} 
+                  className="h-2" 
+                />
+                
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>{formatCurrency(goal.current)}</span>
+                  <span>{formatCurrency(goal.target)}</span>
+                </div>
+              </div>
+            );
+          })}
         </div>
+        
+        <Link to="/goals" className="mt-6 inline-flex items-center text-sm text-wealth-primary hover:underline">
+          View all goals 
+          <ArrowRight className="ml-1 h-4 w-4" />
+        </Link>
       </CardContent>
-      <CardFooter>
-        <Button variant="outline" className="w-full gap-1">
-          <PlusCircle className="h-4 w-4" />
-          <span>Add New Goal</span>
-        </Button>
-      </CardFooter>
     </Card>
   );
 };
