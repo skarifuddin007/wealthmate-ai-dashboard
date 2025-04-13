@@ -9,12 +9,12 @@ const Login = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-grow py-16 bg-gradient-to-br from-wealth-dark via-wealth-primary/20 to-wealth-secondary/20">
+      <main className="flex-grow py-12 md:py-16 bg-gradient-to-br from-wealth-dark via-wealth-primary/20 to-wealth-secondary/20">
         <div className="container px-4 md:px-6">
           <div className="max-w-md mx-auto text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2">Welcome to WealthMate AI</h1>
+            <h1 className="text-3xl font-bold mb-2 gradient-heading">Sign in to WealthMate AI</h1>
             <p className="text-muted-foreground">
-              Sign in to your account or create a new one to get started.
+              Access your financial dashboard or create a new account to get started.
             </p>
           </div>
           
